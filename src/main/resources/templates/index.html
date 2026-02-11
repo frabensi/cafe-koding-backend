@@ -1,52 +1,104 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Daftar Tamu Keren</title>
+    <title>Cafe Koding - VIP Lounge</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- STYLE KHUSUS CAFE THEME --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fdfbf7; /* Warna Cream lembut */
+        }
+        
+        /* Navbar Gradasi Kopi */
+        .navbar-cafe {
+            background: linear-gradient(135deg, #2c1a12 0%, #5d4037 100%);
+        }
+
+        /* Card Melayang */
+        .card-premium {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(93, 64, 55, 0.15);
+            overflow: hidden;
+        }
+
+        /* Header Card dengan Aksen Emas */
+        .card-header-cafe {
+            background-color: #4e342e;
+            color: #ffecb3; /* Warna emas muda */
+            border-bottom: 4px solid #d7ccc8;
+        }
+
+        /* Tabel Cantik */
+        .table-cafe thead {
+            background-color: #3e2723;
+            color: white;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #fff8e1; /* Sorot warna kuning tipis saat di-hover */
+            transform: scale(1.005);
+            transition: 0.2s;
+        }
+        
+        /* Foto Bulat Sempurna */
+        .img-avatar {
+            object-fit: cover;
+            border: 3px solid #8d6e63;
+            padding: 2px;
+            background: white;
+        }
+    </style>
 </head>
 <body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-cafe mb-5 shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">☕ Cafe Koding</a>
+            <a class="navbar-brand fw-bold fs-4" href="/">
+                <i class="fas fa-mug-hot me-2"></i>Cafe Koding
+            </a>
             
             <div class="d-flex align-items-center gap-3">
-                <span class="text-white">
-                    Halo, <b th:text="${#authentication.name}">User</b>!
+                <span class="text-white small d-none d-md-inline">
+                    Selamat Datang, <b class="text-warning" th:text="${#authentication.name}">User</b>!
                 </span>
 
                 <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-danger btn-sm fw-bold">
-                        Logout 🚪
+                    <button type="submit" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                        Logout <i class="fas fa-sign-out-alt ms-1"></i>
                     </button>
                 </form>
             </div>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="card shadow-lg border-0">
+    <div class="container pb-5">
+        <div class="card card-premium">
             
-            <div class="card-header bg-primary text-white text-center py-4">
-                <h2 class="fw-bold"><i class="fas fa-rocket"></i> DAFTAR TAMU ASRAMA</h2>
-                <p>Data Real-time dari Database</p>
+            <div class="card-header card-header-cafe text-center py-5">
+                <h2 class="fw-bold mb-1">
+                    <i class="fas fa-crown me-2 text-warning"></i> DAFTAR TAMU VIP
+                </h2>
+                <p class="mb-3 opacity-75">Manajemen Data Pelanggan Cafe Koding</p>
                 
-                <a href="/tamu/baru" class="btn btn-warning fw-bold px-4 mt-2 shadow-sm">
-                    <i class="fas fa-plus-circle"></i> Tambah Tamu Baru
+                <a href="/tamu/baru" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow-sm text-dark">
+                    <i class="fas fa-plus-circle me-1"></i> Tambah Tamu Baru
                 </a>
             </div>
 
-            <div class="card-body p-4">
+            <div class="card-body p-4 p-md-5 bg-white">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle table-striped">
-                        <thead class="table-dark text-center">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark text-center rounded-3">
                             <tr>
-                                <th>FOTO</th>
-                                <th>NAMA LENGKAP</th>
-                                <th>EMAIL</th>
-                                <th>PESAN</th>
-                                <th>AKSI</th>
+                                <th class="py-3">FOTO</th>
+                                <th class="py-3">NAMA LENGKAP</th>
+                                <th class="py-3">EMAIL</th>
+                                <th class="py-3">PESAN / TESTIMONI</th>
+                                <th class="py-3">AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,39 +107,51 @@
                                 <td class="text-center">
                                     <img th:if="${tamu.foto != null}" 
                                          th:src="@{'/foto-tamu/' + ${tamu.foto}}" 
-                                         class="rounded-circle border border-3 border-white shadow-sm" 
-                                         width="60" height="60" style="object-fit: cover;">
+                                         class="rounded-circle img-avatar shadow-sm" 
+                                         width="60" height="60">
                                     
-                                    <span th:if="${tamu.foto == null}" class="badge bg-secondary rounded-pill p-2">
-                                        No Foto 📷
-                                    </span>
+                                    <div th:if="${tamu.foto == null}" 
+                                         class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto text-white shadow-sm"
+                                         style="width: 60px; height: 60px;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
                                 </td>
 
-                                <td th:text="${tamu.nama}" class="fw-bold text-primary"></td>
-                                <td th:text="${tamu.email}"></td>
-                                <td th:text="${tamu.pesan}" class="text-muted fst-italic"></td>
+                                <td>
+                                    <span th:text="${tamu.nama}" class="fw-bold text-dark d-block"></span>
+                                    <small class="text-muted" style="font-size: 0.8em;">Member Gold</small>
+                                </td>
+                                
+                                <td th:text="${tamu.email}" class="text-secondary"></td>
+                                
+                                <td class="fst-italic text-muted">
+                                    "<span th:text="${tamu.pesan}"></span>"
+                                </td>
 
                                 <td class="text-center">
-                                    <div class="btn-group" role="group">
+                                    <div class="btn-group shadow-sm" role="group">
                                         <a th:href="@{/tamu/edit/{id}(id=${tamu.id})}" 
-                                           class="btn btn-primary btn-sm" title="Edit Data">
-                                            <i class="fas fa-edit"></i>
+                                           class="btn btn-outline-primary btn-sm px-3" title="Edit">
+                                            <i class="fas fa-pen"></i>
                                         </a>
 
                                         <a th:href="@{/tamu/hapus/{id}(id=${tamu.id})}" 
-                                           class="btn btn-danger btn-sm" 
-                                           onclick="return confirm('Yakin mau menghapus tamu ini secara permanen?')"
-                                           title="Hapus Data">
-                                            <i class="fas fa-trash-alt"></i>
+                                           class="btn btn-outline-danger btn-sm px-3" 
+                                           onclick="return confirm('Yakin mau menghapus tamu ini?')"
+                                           title="Hapus">
+                                            <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
 
                             <tr th:if="${#lists.isEmpty(daftarTamu)}">
-                                <td colspan="5" class="text-center py-4 text-muted">
-                                    <i class="fas fa-ghost fa-2x mb-2"></i><br>
-                                    Belum ada tamu nih. Jadilah yang pertama!
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <div class="py-4">
+                                        <i class="fas fa-mug-hot fa-3x mb-3 text-secondary opacity-25"></i>
+                                        <h5>Belum ada tamu hari ini</h5>
+                                        <p class="small">Yuk, input data pelanggan pertamamu!</p>
+                                    </div>
                                 </td>
                             </tr>
 
@@ -96,8 +160,8 @@
                 </div>
             </div>
             
-            <div class="card-footer text-center text-muted small py-3">
-                &copy; 2026 Cafe Koding - Spring Boot Project
+            <div class="card-footer text-center bg-white border-0 text-muted small py-4">
+                Made with <i class="fas fa-heart text-danger"></i> & <i class="fas fa-coffee text-warning"></i> by Cafe Koding
             </div>
         </div>
     </div>
