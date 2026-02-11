@@ -1,41 +1,42 @@
-package com.portofolio.backend_api;
+package com.portofolio.backend_api; // <--- INI KUNCINYA (Tanpa .model)
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-// IMPORT BARU: Ini adalah Pasal-Pasal Hukumnya 👇
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Table(name = "buku_tamu")
 public class BukuTamu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // PASAL 1: Nama Wajib Diisi!
-    @NotBlank(message = "Waduh, Nama tidak boleh kosong dong!") 
+    @NotEmpty(message = "Nama tidak boleh kosong")
     private String nama;
 
-    // PASAL 2: Email Wajib Diisi & Harus Format Email (ada @ dan .)
-    @NotBlank(message = "Email harus diisi ya!")
-    @Email(message = "Format email salah! Contoh: nama@gmail.com")
+    @NotEmpty(message = "Email harus diisi")
+    @Email(message = "Format email salah")
     private String email;
 
-    // PASAL 3: Pesan Minimal 5 Huruf
-    @NotBlank(message = "Pesan tidak boleh kosong.")
-    @Size(min = 5, message = "Pesan terlalu pendek, minimal 5 huruf ya!")
+    @Size(min = 5, message = "Pesan minimal 5 karakter")
     private String pesan;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String foto;
 
-    // Constructor Kosong (Wajib)
     public BukuTamu() {}
 
-    // Getter dan Setter
+    public BukuTamu(String nama, String email, String pesan, String foto) {
+        this.nama = nama;
+        this.email = email;
+        this.pesan = pesan;
+        this.foto = foto;
+    }
+
+    // GETTER SETTER
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
