@@ -1,32 +1,32 @@
 package com.portofolio.backend_api;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
-@Entity // Menandakan ini adalah tabel Database
+@Entity
+@Table(name = "pengguna")
 public class Pengguna {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
-    private String password;
-    private String role; // Contoh: "ADMIN" atau "USER"
 
-    // Constructor Kosong (Wajib buat JPA)
+    @Column(nullable = false)
+    private String password;
+
+    private String role; // CONTOH: "ADMIN"
+
     public Pengguna() {}
 
-    // Constructor Isi Data
     public Pengguna(String username, String password, String role) {
         this.username = username;
         this.password = password;
         this.role = role;
     }
 
-    // Getter dan Setter (Biar datanya bisa diambil/diisi)
+    // GETTER SETTER
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
