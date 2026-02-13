@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Cafe Koding - VIP Lounge</title>
     
@@ -9,77 +10,16 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 
     <style>
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: #fdfbf7; /* Cream Lembut */
-            color: #4e342e; 
-        }
-        
-        /* Navbar Gradasi Kopi */
-        .navbar-cafe { 
-            background: linear-gradient(135deg, #2c1a12 0%, #5d4037 100%); 
-        }
-
-        /* Card Melayang & Mewah */
-        .card-premium {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(93, 64, 55, 0.15);
-            overflow: hidden;
-            background: white;
-        }
-
-        /* Header Card */
-        .card-header-cafe {
-            background-color: #4e342e;
-            color: #ffecb3; /* Emas Muda */
-            border-bottom: 4px solid #d7ccc8;
-            padding: 2rem;
-        }
-
-        /* Tabel Cantik */
-        .table-cafe thead th {
-            background-color: #3e2723 !important;
-            color: white !important;
-            border: none;
-            padding: 15px;
-            font-weight: 600;
-        }
-        
-        /* Efek Hover Baris */
-        .table-hover tbody tr:hover {
-            background-color: #fff8e1;
-            transform: scale(1.002);
-            transition: 0.2s;
-        }
-        
-        /* Foto Bulat Sempurna (Avatar) */
-        .img-avatar {
-            object-fit: cover;
-            border: 3px solid #8d6e63;
-            padding: 2px;
-            background: white;
-            transition: transform 0.3s;
-        }
-        .img-avatar:hover {
-            transform: scale(1.2) rotate(5deg);
-            border-color: #ffca28;
-            cursor: pointer;
-        }
-
-        /* Badge Gold */
-        .badge-gold {
-            background-color: #fff3e0;
-            color: #f57f17;
-            border: 1px solid #ffe0b2;
-            padding: 5px 10px;
-        }
-
-        /* Pagination DataTables */
-        .page-item.active .page-link {
-            background-color: #5d4037 !important;
-            border-color: #5d4037 !important;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #fdfbf7; color: #4e342e; }
+        .navbar-cafe { background: linear-gradient(135deg, #2c1a12 0%, #5d4037 100%); }
+        .card-premium { border: none; border-radius: 20px; box-shadow: 0 15px 35px rgba(93, 64, 55, 0.15); overflow: hidden; background: white; }
+        .card-header-cafe { background-color: #4e342e; color: #ffecb3; border-bottom: 4px solid #d7ccc8; padding: 2rem; }
+        .table-cafe thead th { background-color: #3e2723 !important; color: white !important; border: none; padding: 15px; font-weight: 600; }
+        .table-hover tbody tr:hover { background-color: #fff8e1; transform: scale(1.002); transition: 0.2s; }
+        .img-avatar { object-fit: cover; border: 3px solid #8d6e63; padding: 2px; background: white; transition: transform 0.3s; }
+        .img-avatar:hover { transform: scale(1.2) rotate(5deg); border-color: #ffca28; cursor: pointer; }
+        .badge-gold { background-color: #fff3e0; color: #f57f17; border: 1px solid #ffe0b2; padding: 5px 10px; }
+        .page-item.active .page-link { background-color: #5d4037 !important; border-color: #5d4037 !important; }
     </style>
 </head>
 <body class="bg-light">
@@ -91,14 +31,23 @@
             </a>
             
             <div class="d-flex align-items-center gap-3">
-                <span class="text-white small d-none d-md-inline opacity-75">
-                    Welcome to VIP Area
-                </span>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                        Logout <i class="fas fa-sign-out-alt ms-1"></i>
-                    </button>
-                </form>
+                <div sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login Admin
+                    </a>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-3">
+                    <span class="text-white small d-none d-md-inline opacity-75">
+                        Halo, <span sec:authentication="name" class="fw-bold text-warning">Admin</span>!
+                    </span>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                            Logout <i class="fas fa-sign-out-alt ms-1"></i>
+                        </button>
+                    </form>
+                </div>
+
             </div>
         </div>
     </nav>
@@ -126,53 +75,39 @@
                                 <th>NAMA LENGKAP</th>
                                 <th>EMAIL</th>
                                 <th>PESAN</th>
-                                <th>AKSI</th>
+                                <th sec:authorize="isAuthenticated()">AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="tamu : ${daftarTamu}">
-                                
                                 <td class="text-center">
-                                    
                                     <img th:if="${tamu.foto != null and tamu.foto != ''}" 
                                          src="data:image/jpeg;base64,"
                                          th:attrappend="src=${tamu.foto}" 
                                          class="rounded-circle img-avatar shadow-sm" 
                                          width="60" height="60">
-                                    
                                     <div th:if="${tamu.foto == null or tamu.foto == ''}" 
                                          class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mx-auto text-white shadow-sm"
                                          style="width: 60px; height: 60px; border: 3px solid #eee;">
                                         <i class="fas fa-user fa-lg"></i>
                                     </div>
                                 </td>
-
                                 <td>
                                     <span th:text="${tamu.nama}" class="fw-bold text-dark d-block fs-6"></span>
                                     <span class="badge badge-gold rounded-pill mt-1" style="font-size: 0.7em;">
                                         <i class="fas fa-star me-1"></i>Member Gold
                                     </span>
                                 </td>
-                                
                                 <td th:text="${tamu.email}" class="text-secondary small"></td>
-                                
-                                <td class="fst-italic text-muted small">
-                                    "<span th:text="${tamu.pesan}"></span>"
-                                </td>
+                                <td class="fst-italic text-muted small">"<span th:text="${tamu.pesan}"></span>"</td>
 
-                                <td class="text-center">
+                                <td class="text-center" sec:authorize="isAuthenticated()">
                                     <div class="btn-group shadow-sm" role="group">
                                         <a th:href="@{/tamu/edit/{id}(id=${tamu.id})}" 
-                                           class="btn btn-outline-primary btn-sm px-3" title="Edit">
-                                            <i class="fas fa-pen"></i>
-                                        </a>
-
+                                           class="btn btn-outline-primary btn-sm px-3"><i class="fas fa-pen"></i></a>
                                         <a th:href="@{/tamu/hapus/{id}(id=${tamu.id})}" 
                                            class="btn btn-outline-danger btn-sm px-3" 
-                                           onclick="return confirm('Yakin mau menghapus tamu ini?')"
-                                           title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                           onclick="return confirm('Hapus?')"><i class="fas fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -180,7 +115,6 @@
                     </table>
                 </div>
             </div>
-            
             <div class="card-footer text-center bg-white border-0 text-muted small py-4">
                 Made with <i class="fas fa-heart text-danger"></i> & <i class="fas fa-coffee text-warning"></i> by Cafe Koding
             </div>
@@ -191,17 +125,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-
     <script>
         $(document).ready(function () {
-            $('#tabelTamu').DataTable({
-                language: {
-                    search: "🔍 Cari Tamu:",
-                    lengthMenu: "Tampilkan _MENU_ data",
-                    info: "Hal _PAGE_ dari _PAGES_",
-                    paginate: { first: "«", last: "»", next: "›", previous: "‹" }
-                }
-            });
+            $('#tabelTamu').DataTable();
         });
     </script>
 
