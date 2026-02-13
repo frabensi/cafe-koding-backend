@@ -1,0 +1,86 @@
+package com.portofolio.backend_api;
+
+import com.portofolio.backend_api.model.BukuTamu; // Sesuaikan jika ada sub-package
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.IOException;
+import java.util.List;
+
+public class ExcelExporter {
+    private XSSFWorkbook workbook;
+    private Sheet sheet;
+    private List<BukuTamu> listTamu;
+
+    public ExcelExporter(List<BukuTamu> listTamu) {
+        this.listTamu = listTamu;
+        workbook = new XSSFWorkbook();
+    }
+
+    private void writeHeaderLine() {
+        sheet = workbook.createSheet("Data Tamu");
+
+        Row row = sheet.createRow(0);
+
+        CellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeight(16);
+        style.setFont(font);
+
+        createCell(row, 0, "ID", style);
+        createCell(row, 1, "Nama Lengkap", style);
+        createCell(row, 2, "Email", style);
+        createCell(row, 3, "Pesan", style);
+        createCell(row, 4, "Status Foto", style); // Kita kasih info aja ada foto/tidak
+    }
+
+    private void createCell(Row row, int columnCount, Object value, CellStyle style) {
+        sheet.autoSizeColumn(columnCount);
+        Cell cell = row.createCell(columnCount);
+        if (value instanceof Long) {
+            cell.setCellValue((Long) value);
+        } else if (value instanceof Boolean) {
+            cell.setCellValue((Boolean) value);
+        } else {
+            cell.setCellValue((String) value);
+        }
+        cell.setCellStyle(style);
+    }
+
+    private void writeDataLines() {
+        int rowCount = 1;
+
+        CellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setFontHeight(14);
+        style.setFont(font);
+
+        for (BukuTamu tamu : listTamu) {
+            Row row = sheet.createRow(rowCount++);
+            int columnCount = 0;
+
+            createCell(row, columnCount++, tamu.getId(), style);
+            createCell(row, columnCount++, tamu.getNama(), style);
+            createCell(row, columnCount++, tamu.getEmail(), style);
+            createCell(row, columnCount++, tamu.getPesan(), style);
+            
+            // Logika Status Foto
+            String statusFoto = (tamu.getFoto() != null && !tamu.getFoto().isEmpty()) ? "✅ Ada Foto" : "❌ Tanpa Foto";
+            createCell(row, columnCount++, statusFoto, style);
+        }
+    }
+
+    public void export(HttpServletResponse response) throws IOException {
+        writeHeaderLine();
+        writeDataLines();
+
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        outputStream.close();
+    }
+}

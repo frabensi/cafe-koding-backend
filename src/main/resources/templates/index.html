@@ -31,6 +31,7 @@
             </a>
             
             <div class="d-flex align-items-center gap-3">
+                
                 <div sec:authorize="!isAuthenticated()">
                     <a href="/login" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark">
                         <i class="fas fa-sign-in-alt me-1"></i> Login Admin
@@ -61,9 +62,15 @@
                 </h2>
                 <p class="mb-3 opacity-75 small">Manajemen Data Pelanggan Real-time</p>
                 
-                <a href="/tamu/baru" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow-sm text-dark hover-scale">
-                    <i class="fas fa-plus-circle me-1"></i> Tambah Tamu Baru
-                </a>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="/tamu/baru" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow-sm text-dark hover-scale">
+                        <i class="fas fa-plus-circle me-1"></i> Tambah Tamu
+                    </a>
+
+                    <a sec:authorize="isAuthenticated()" href="/tamu/export/excel" class="btn btn-success fw-bold px-4 py-2 rounded-pill shadow-sm text-white hover-scale">
+                        <i class="fas fa-file-excel me-1"></i> Download Laporan
+                    </a>
+                </div>
             </div>
 
             <div class="card-body p-4 p-md-5">
