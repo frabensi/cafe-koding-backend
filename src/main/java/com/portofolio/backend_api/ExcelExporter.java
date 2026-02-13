@@ -1,6 +1,8 @@
 package com.portofolio.backend_api;
 
-import com.portofolio.backend_api.model.BukuTamu; // Sesuaikan jika ada sub-package
+// BARIS INI TADI SALAH, JADI KITA HAPUS SAJA:
+// import com.portofolio.backend_api.model.BukuTamu; 
+
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
@@ -35,7 +37,7 @@ public class ExcelExporter {
         createCell(row, 1, "Nama Lengkap", style);
         createCell(row, 2, "Email", style);
         createCell(row, 3, "Pesan", style);
-        createCell(row, 4, "Status Foto", style); // Kita kasih info aja ada foto/tidak
+        createCell(row, 4, "Status Foto", style);
     }
 
     private void createCell(Row row, int columnCount, Object value, CellStyle style) {
